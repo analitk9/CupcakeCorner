@@ -8,14 +8,40 @@
 import SwiftUI
 
 struct ContentView: View {
+
+    @State private var order = Order()
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack {
+            Form {
+                Section {
+                    Picker("select your cake type", selection: $order.type) {
+                        ForEach(Order.types.indices, id: \.self) { indx in
+                            VStack {
+                                Text(Order.types[indx])
+                            }
+                        }
+                    }
+                    Stepper("Number of cakes:  \(order.quantity)", value: $order.quantity)
+                }
+                Section {
+                    Toggle("Any special requests?", isOn: $order.specialRequestEnabled)
+
+                    if order.specialRequestEnabled {
+                        Toggle("Add extra frosting", isOn: $order.extraFrosting)
+
+                        Toggle("Add extra sprinkles", isOn: $order.addSprinkles)
+                    }
+                }
+                Section {
+                    NavigationLink("Delivery details") {
+                        AddressView(order: order)
+                    }
+                }
+                
+            }
+            .navigationTitle("Cupcake Corner")
         }
-        .padding()
     }
 }
 
